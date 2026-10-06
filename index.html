@@ -3,111 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Sheet Calculator</title>
+    <title>Trip Sheet Calculator Pro</title>
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a2e;
-            color: #eee;
-            padding: 15px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 12px;
             margin: 0;
+            min-height: 100vh;
         }
         h1 {
-            color: #00d9ff;
+            color: #38bdf8;
             text-align: center;
             font-size: 22px;
+            margin: 10px 0 20px 0;
         }
         .card {
-            background-color: #16213e;
-            border-radius: 10px;
+            background-color: #1e293b;
+            border-radius: 12px;
             padding: 15px;
             margin-bottom: 15px;
-            border-right: 4px solid #00d9ff;
+            border-right: 4px solid #38bdf8;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .card-title {
+            color: #38bdf8;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
         }
         label {
             display: block;
-            margin-top: 10px;
-            margin-bottom: 5px;
+            margin-top: 12px;
+            margin-bottom: 6px;
             font-size: 14px;
-            color: #a0a0b0;
+            color: #94a3b8;
         }
         input, select {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #333;
-            background-color: #0f3460;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
             color: #fff;
             font-size: 16px;
-            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+        .row > div {
+            flex: 1;
         }
         button {
             width: 100%;
-            padding: 14px;
-            background-color: #00d9ff;
-            color: #000;
+            padding: 16px;
+            background-color: #38bdf8;
+            color: #0f172a;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 18px;
             font-weight: bold;
             margin-top: 15px;
             cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:active {
+            background-color: #0ea5e9;
         }
         #result {
-            background-color: #0f3460;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
             display: none;
         }
-        .warning {
-            color: #ff4d4d;
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+            font-size: 15px;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            color: #94a3b8;
+        }
+        .result-value {
             font-weight: bold;
+            color: #fff;
+        }
+        .status-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
         }
         .safe {
-            color: #00ff88;
-            font-weight: bold;
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 2px solid #22c55e;
+        }
+        .warning {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 2px solid #ef4444;
+        }
+        .caution {
+            background-color: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+        }
+        .custom-fields {
+            display: none;
+            margin-top: 10px;
+        }
+        .custom-fields.active {
+            display: block;
+        }
+        .hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
         }
     </style>
 </head>
 <body>
 
-    <h1>🛢️ Trip Sheet Calculator</h1>
+    <h1>🛢️ Trip Sheet Calculator Pro</h1>
 
     <div class="card">
+        <div class="card-title">⚙️ بيانات الأنبوب (Pipe Data)</div>
+        
         <label>نوع الأنبوب (Component):</label>
-        <select id="component">
-            <option value="0.0076">Drill Pipe (5")</option>
-            <option value="0.0179">HWDP</option>
-            <option value="0.0349">Drill Collar</option>
+        <select id="component" onchange="toggleCustom()">
+            <option value="5,4.276">Drill Pipe (5" - 19.5 ppf)</option>
+            <option value="5,4">Drill Pipe (5" - 25.6 ppf)</option>
+            <option value="3.5,2.764">Drill Pipe (3.5")</option>
+            <option value="6.5,2.812">Drill Collar (6.5")</option>
+            <option value="6.75,2.812">Drill Collar (6.75")</option>
+            <option value="5,3">HWDP (5")</option>
+            <option value="custom">مخصص (Custom)</option>
         </select>
+
+        <div class="custom-fields" id="customFields">
+            <div class="row">
+                <div>
+                    <label>القطر الخارجي OD (inch):</label>
+                    <input type="number" id="od" value="5" step="0.001">
+                </div>
+                <div>
+                    <label>القطر الداخلي ID (inch):</label>
+                    <input type="number" id="id" value="4.276" step="0.001">
+                </div>
+            </div>
+        </div>
 
         <label>طول الـ Stand (قدم):</label>
         <input type="number" id="standLength" value="93" step="0.1">
 
         <label>عدد الـ Stands المسحوبة:</label>
         <input type="number" id="standsPulled" value="5" step="1">
-
-        <label>قراءة Trip Tank الفعلية (برميل):</label>
-        <input type="number" id="actualVolume" value="0" step="0.1">
     </div>
 
-    <button onclick="calculateTrip()">احسب الآن</button>
+    <div class="card">
+        <div class="card-title">📊 قراءات Trip Tank</div>
+        
+        <label>قراءة Trip Tank قبل السحب (برميل):</label>
+        <input type="number" id="beforeVolume" value="0" step="0.1">
 
-    <div id="result"></div>
+        <label>قراءة Trip Tank بعد السحب (برميل):</label>
+        <input type="number" id="afterVolume" value="0" step="0.1">
+
+        <div class="hint">💡 الفرق بين القراءتين هو الحجم الفعلي الذي دخل إلى Trip Tank.</div>
+    </div>
+
+    <button onclick="calculateTrip()">احسب الآن (Calculate)</button>
+
+    <div class="card" id="result">
+        <div class="card-title">📋 النتائج</div>
+        <div id="resultContent"></div>
+    </div>
 
     <script>
+        // خصائص الأنابيب (OD, ID) بالبوصة
+        const pipeData = {
+            "5,4.276": { od: 5, id: 4.276, name: "Drill Pipe 5\" - 19.5 ppf" },
+            "5,4": { od: 5, id: 4, name: "Drill Pipe 5\" - 25.6 ppf" },
+            "3.5,2.764": { od: 3.5, id: 2.764, name: "Drill Pipe 3.5\"" },
+            "6.5,2.812": { od: 6.5, id: 2.812, name: "Drill Collar 6.5\"" },
+            "6.75,2.812": { od: 6.75, id: 2.812, name: "Drill Collar 6.75\"" },
+            "5,3": { od: 5, id: 3, name: "HWDP 5\"" }
+        };
+
+        function toggleCustom() {
+            const select = document.getElementById('component');
+            const customFields = document.getElementById('customFields');
+            if (select.value === 'custom') {
+                customFields.classList.add('active');
+            } else {
+                customFields.classList.remove('active');
+            }
+        }
+
+        function getPipeDimensions() {
+            const select = document.getElementById('component');
+            if (select.value === 'custom') {
+                return {
+                    od: parseFloat(document.getElementById('od').value),
+                    id: parseFloat(document.getElementById('id').value),
+                    name: "Custom Pipe"
+                };
+            } else {
+                return pipeData[select.value];
+            }
+        }
+
         function calculateTrip() {
-            const displacementPerFt = parseFloat(document.getElementById('component').value);
+            // قراءة القيم
+            const pipe = getPipeDimensions();
             const standLength = parseFloat(document.getElementById('standLength').value);
             const standsPulled = parseFloat(document.getElementById('standsPulled').value);
-            const actualVolume = parseFloat(document.getElementById('actualVolume').value);
+            const beforeVolume = parseFloat(document.getElementById('beforeVolume').value);
+            const afterVolume = parseFloat(document.getElementById('afterVolume').value);
 
+            // التحقق من المدخلات
+            if (!pipe || !standLength || !standsPulled) {
+                alert("الرجاء إدخال جميع البيانات المطلوبة");
+                return;
+            }
+
+            // الحسابات
             const totalLength = standLength * standsPulled;
+            
+            // الإزاحة (Displacement) - حجم الطين الذي يخرج من البئر
+            const displacementPerFt = (Math.pow(pipe.od, 2) - Math.pow(pipe.id, 2)) / 1029.4;
             const calculatedVolume = totalLength * displacementPerFt;
+
+            // السعة الداخلية (Capacity) - حجم الطين داخل الأنبوب
+            const capacityPerFt = Math.pow(pipe.id, 2) / 1029.4;
+            const totalCapacity = totalLength * capacityPerFt;
+
+            // الحجم الفعلي في Trip Tank
+            const actualVolume = afterVolume - beforeVolume;
             const difference = actualVolume - calculatedVolume;
 
+            // عرض النتائج
             const resultDiv = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
             resultDiv.style.display = 'block';
 
             let statusMessage = '';
@@ -116,7 +267,7 @@
             if (Math.abs(difference) < 1.5) {
                 statusMessage = '✅ الوضع آمن - الفرق ضمن الحدود الطبيعية';
                 statusClass = 'safe';
-            } else if (difference > 0) {
+            } else if (difference > 1.5) {
                 statusMessage = '⚠️ تحذير: زيادة في الحجم - احتمال تدفق (Kick)!';
                 statusClass = 'warning';
             } else {
@@ -124,14 +275,44 @@
                 statusClass = 'warning';
             }
 
-            resultDiv.innerHTML = `
-                <p><strong>الطول الإجمالي:</strong> ${totalLength.toFixed(1)} قدم</p>
-                <p><strong>الحجم المحسوب (المتوقع):</strong> ${calculatedVolume.toFixed(2)} برميل</p>
-                <p><strong>الحجم الفعلي (المقاس):</strong> ${actualVolume.toFixed(2)} برميل</p>
-                <p><strong>الفرق:</strong> ${difference.toFixed(2)} برميل</p>
-                <hr style="border-color:#333;">
-                <p class="${statusClass}">${statusMessage}</p>
+            resultContent.innerHTML = `
+                <div class="result-row">
+                    <span class="result-label">نوع الأنبوب:</span>
+                    <span class="result-value">${pipe.name}</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">OD / ID:</span>
+                    <span class="result-value">${pipe.od}" / ${pipe.id}"</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">الطول الإجمالي:</span>
+                    <span class="result-value">${totalLength.toFixed(1)} قدم</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">الإزاحة (bbl/ft):</span>
+                    <span class="result-value">${displacementPerFt.toFixed(4)}</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">السعة الداخلية (bbl/ft):</span>
+                    <span class="result-value">${capacityPerFt.toFixed(4)}</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">الحجم المتوقع (Displacement):</span>
+                    <span class="result-value">${calculatedVolume.toFixed(2)} برميل</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">الحجم الفعلي (Actual):</span>
+                    <span class="result-value">${actualVolume.toFixed(2)} برميل</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">الفرق (Difference):</span>
+                    <span class="result-value">${difference.toFixed(2)} برميل</span>
+                </div>
+                <div class="status-box ${statusClass}">${statusMessage}</div>
             `;
+
+            // تمرير للنتائج
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 
