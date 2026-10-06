@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Sheet Calculator Pro</title>
+    <title>Trip Sheet Calculator - Metric</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -19,6 +19,16 @@
             text-align: center;
             font-size: 20px;
             margin: 10px 0 15px 0;
+        }
+        .unit-badge {
+            display: inline-block;
+            background-color: #38bdf8;
+            color: #0f172a;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 5px;
         }
         .card {
             background-color: #1e293b;
@@ -97,7 +107,6 @@
         .hint { font-size: 12px; color: #64748b; margin-top: 4px; }
         #result { display: none; }
 
-        /* جدول Trip Sheet */
         .table-container {
             overflow-x: auto;
             margin-top: 10px;
@@ -127,7 +136,6 @@
         }
         tr:nth-child(even) { background-color: rgba(15, 23, 42, 0.5); }
         tr:hover { background-color: rgba(56, 189, 248, 0.1); }
-        .empty-row { text-align: center; color: #64748b; padding: 20px; }
         .badge {
             display: inline-block;
             padding: 2px 6px;
@@ -162,14 +170,14 @@
             border: 1px solid #334155;
         }
         .stat-label { font-size: 11px; color: #94a3b8; }
-        .stat-value { font-size: 16px; font-weight: bold; color: #38bdf8; margin-top: 4px; }
+        .stat-value { font-size: 15px; font-weight: bold; color: #38bdf8; margin-top: 4px; }
         .stat-value.warn { color: #ef4444; }
         .stat-value.ok { color: #22c55e; }
     </style>
 </head>
 <body>
 
-    <h1>🛢️ Trip Sheet Calculator Pro</h1>
+    <h1>🛢️ Trip Sheet Calculator <span class="unit-badge">Metric</span></h1>
 
     <!-- إدخال البيانات -->
     <div class="card">
@@ -201,8 +209,8 @@
 
         <div class="row">
             <div>
-                <label>طول الـ Stand (قدم):</label>
-                <input type="number" id="standLength" value="93" step="0.1">
+                <label>طول الـ Stand (متر):</label>
+                <input type="number" id="standLength" value="28.5" step="0.01">
             </div>
             <div>
                 <label>عدد الـ Stands:</label>
@@ -217,15 +225,15 @@
         
         <div class="row">
             <div>
-                <label>قراءة قبل السحب (bbl):</label>
-                <input type="number" id="beforeVolume" value="0" step="0.1">
+                <label>قراءة قبل السحب (L):</label>
+                <input type="number" id="beforeVolume" value="0" step="1">
             </div>
             <div>
-                <label>قراءة بعد السحب (bbl):</label>
-                <input type="number" id="afterVolume" value="0" step="0.1">
+                <label>قراءة بعد السحب (L):</label>
+                <input type="number" id="afterVolume" value="0" step="1">
             </div>
         </div>
-        <div class="hint">💡 الفرق بين القراءتين هو الحجم الفعلي الذي دخل إلى Trip Tank.</div>
+        <div class="hint">💡 الفرق بين القراءتين هو الحجم الفعلي الذي دخل إلى Trip Tank (باللتر).</div>
     </div>
 
     <!-- زر الحساب -->
@@ -271,10 +279,10 @@
                     <tr>
                         <th>#</th>
                         <th>النوع</th>
-                        <th>الطول</th>
-                        <th>المتوقع</th>
-                        <th>الفعلي</th>
-                        <th>الفرق</th>
+                        <th>الطول (m)</th>
+                        <th>المتوقع (L)</th>
+                        <th>الفعلي (L)</th>
+                        <th>الفرق (L)</th>
                         <th>الحالة</th>
                         <th></th>
                     </tr>
@@ -289,6 +297,10 @@
     </div>
 
     <script>
+        // ثوابت التحويل
+        const FT_TO_M = 0.3048;           // 1 قدم = 0.3048 متر
+        const BBL_TO_L = 158.987;          // 1 برميل = 158.987 لتر
+
         const pipeData = {
             "5,4.276": { od: 5, id: 4.276, name: "DP 5\" 19.5" },
             "5,4": { od: 5, id: 4, name: "DP 5\" 25.6" },
@@ -336,18 +348,28 @@
                 return;
             }
 
-            const totalLength = standLength * standsPulled;
-            const displacementPerFt = (Math.pow(pipe.od, 2) - Math.pow(pipe.id, 2)) / 1029.4;
-            const calculatedVolume = totalLength * displacementPerFt;
-            const capacityPerFt = Math.pow(pipe.id, 2) / 1029.4;
+            const totalLength = standLength * standsPulled; // متر
+
+            // الإزاحة (bbl/ft) ثم تحويلها إلى (L/m)
+            const displacementPerFtBbl = (Math.pow(pipe.od, 2) - Math.pow(pipe.id, 2)) / 1029.4;
+            const displacementPerM_L = displacementPerFtBbl * BBL_TO_L / FT_TO_M;
+
+            // السعة (bbl/ft) ثم تحويلها إلى (L/m)
+            const capacityPerFtBbl = Math.pow(pipe.id, 2) / 1029.4;
+            const capacityPerM_L = capacityPerFtBbl * BBL_TO_L / FT_TO_M;
+
+            // الحجم المتوقع باللتر
+            const calculatedVolume = totalLength * displacementPerM_L;
+
+            // الحجم الفعلي باللتر
             const actualVolume = afterVolume - beforeVolume;
             const difference = actualVolume - calculatedVolume;
 
             let statusMessage = '', statusClass = '', badge = '';
-            if (Math.abs(difference) < 1.5) {
+            if (Math.abs(difference) < 200) { // معيار: 200 لتر (≈ 1.26 برميل)
                 statusMessage = '✅ الوضع آمن - ضمن الحدود الطبيعية';
                 statusClass = 'safe'; badge = 'safe';
-            } else if (difference > 1.5) {
+            } else if (difference > 200) {
                 statusMessage = '⚠️ تحذير: زيادة - احتمال تدفق (Kick)!';
                 statusClass = 'warning'; badge = 'warn';
             } else {
@@ -355,7 +377,6 @@
                 statusClass = 'warning'; badge = 'warn';
             }
 
-            // حفظ الحساب الأخير
             lastCalculation = {
                 pipe: pipe,
                 stands: standsPulled,
@@ -376,11 +397,13 @@
                 <div class="result-row"><span class="result-label">نوع الأنبوب:</span><span class="result-value">${pipe.name}</span></div>
                 <div class="result-row"><span class="result-label">OD / ID:</span><span class="result-value">${pipe.od}" / ${pipe.id}"</span></div>
                 <div class="result-row"><span class="result-label">عدد الـ Stands:</span><span class="result-value">${standsPulled}</span></div>
-                <div class="result-row"><span class="result-label">الطول الإجمالي:</span><span class="result-value">${totalLength.toFixed(1)} قدم</span></div>
-                <div class="result-row"><span class="result-label">الإزاحة (bbl/ft):</span><span class="result-value">${displacementPerFt.toFixed(4)}</span></div>
-                <div class="result-row"><span class="result-label">الحجم المتوقع:</span><span class="result-value">${calculatedVolume.toFixed(2)} برميل</span></div>
-                <div class="result-row"><span class="result-label">الحجم الفعلي:</span><span class="result-value">${actualVolume.toFixed(2)} برميل</span></div>
-                <div class="result-row"><span class="result-label">الفرق:</span><span class="result-value">${difference.toFixed(2)} برميل</span></div>
+                <div class="result-row"><span class="result-label">الطول الإجمالي:</span><span class="result-value">${totalLength.toFixed(2)} م</span></div>
+                <div class="result-row"><span class="result-label">الإزاحة (L/m):</span><span class="result-value">${displacementPerM_L.toFixed(2)}</span></div>
+                <div class="result-row"><span class="result-label">السعة (L/m):</span><span class="result-value">${capacityPerM_L.toFixed(2)}</span></div>
+                <div class="result-row"><span class="result-label">الحجم المتوقع:</span><span class="result-value">${calculatedVolume.toFixed(1)} لتر</span></div>
+                <div class="result-row"><span class="result-label">الحجم الفعلي:</span><span class="result-value">${actualVolume.toFixed(1)} لتر</span></div>
+                <div class="result-row"><span class="result-label">الفرق:</span><span class="result-value">${difference.toFixed(1)} لتر</span></div>
+                <div class="result-row"><span class="result-label">الحجم المتوقع (m³):</span><span class="result-value">${(calculatedVolume/1000).toFixed(3)} م³</span></div>
                 <div class="status-box ${statusClass}">${statusMessage}</div>
             `;
 
@@ -391,9 +414,7 @@
             if (!lastCalculation) return;
             tripData.push(lastCalculation);
             renderTable();
-            // إعادة تعيين قراءات Trip Tank
             document.getElementById('beforeVolume').value = document.getElementById('afterVolume').value;
-            document.getElementById('afterVolume').value = document.getElementById('afterVolume').value;
         }
 
         function renderTable() {
@@ -423,46 +444,43 @@
                     <tr>
                         <td>${i + 1}</td>
                         <td>${row.pipe.name}</td>
-                        <td>${row.totalLength.toFixed(0)}'</td>
-                        <td>${row.calculatedVolume.toFixed(2)}</td>
-                        <td>${row.actualVolume.toFixed(2)}</td>
-                        <td>${row.difference.toFixed(2)}</td>
+                        <td>${row.totalLength.toFixed(2)}</td>
+                        <td>${row.calculatedVolume.toFixed(1)}</td>
+                        <td>${row.actualVolume.toFixed(1)}</td>
+                        <td>${row.difference.toFixed(1)}</td>
                         <td><span class="badge badge-${row.status}">${row.status === 'safe' ? 'OK' : '!'}</span></td>
                         <td><button class="delete-btn" onclick="deleteRow(${i})">✕</button></td>
                     </tr>
                 `;
             });
 
-            // صف الإجمالي
             html += `
                 <tr class="total-row">
                     <td colspan="2">الإجمالي</td>
-                    <td>${totalLength.toFixed(0)}'</td>
-                    <td>${totalExpected.toFixed(2)}</td>
-                    <td>${totalActual.toFixed(2)}</td>
-                    <td>${totalDiff.toFixed(2)}</td>
+                    <td>${totalLength.toFixed(2)}</td>
+                    <td>${totalExpected.toFixed(1)}</td>
+                    <td>${totalActual.toFixed(1)}</td>
+                    <td>${totalDiff.toFixed(1)}</td>
                     <td colspan="2"></td>
                 </tr>
             `;
 
             tbody.innerHTML = html;
 
-            // تحديث الإحصائيات
-            document.getElementById('statLength').textContent = totalLength.toFixed(0) + "'";
-            document.getElementById('statExpected').textContent = totalExpected.toFixed(2) + " bbl";
-            document.getElementById('statActual').textContent = totalActual.toFixed(2) + " bbl";
+            document.getElementById('statLength').textContent = totalLength.toFixed(2) + " m";
+            document.getElementById('statExpected').textContent = totalExpected.toFixed(1) + " L";
+            document.getElementById('statActual').textContent = totalActual.toFixed(1) + " L";
             
             const diffEl = document.getElementById('statDiff');
-            diffEl.textContent = totalDiff.toFixed(2) + " bbl";
-            diffEl.className = 'stat-value ' + (Math.abs(totalDiff) < 1.5 ? 'ok' : 'warn');
+            diffEl.textContent = totalDiff.toFixed(1) + " L";
+            diffEl.className = 'stat-value ' + (Math.abs(totalDiff) < 200 ? 'ok' : 'warn');
 
-            // الحالة العامة
             const statusEl = document.getElementById('overallStatus');
             statusEl.style.display = 'block';
-            if (Math.abs(totalDiff) < 1.5) {
+            if (Math.abs(totalDiff) < 200) {
                 statusEl.className = 'status-box safe';
                 statusEl.textContent = '✅ الحالة العامة: آمن';
-            } else if (totalDiff > 1.5) {
+            } else if (totalDiff > 200) {
                 statusEl.className = 'status-box warning';
                 statusEl.textContent = '⚠️ تحذير عام: زيادة - احتمال Kick!';
             } else {
@@ -486,10 +504,10 @@
         }
 
         function copyTable() {
-            let text = "Trip Sheet\n==========\n";
-            text += "#\tType\tLength\tExpected\tActual\tDiff\n";
+            let text = "Trip Sheet (Metric)\n=====================\n";
+            text += "#\tType\tLength(m)\tExpected(L)\tActual(L)\tDiff(L)\n";
             tripData.forEach((row, i) => {
-                text += `${i+1}\t${row.pipe.name}\t${row.totalLength.toFixed(0)}\t${row.calculatedVolume.toFixed(2)}\t${row.actualVolume.toFixed(2)}\t${row.difference.toFixed(2)}\n`;
+                text += `${i+1}\t${row.pipe.name}\t${row.totalLength.toFixed(2)}\t${row.calculatedVolume.toFixed(1)}\t${row.actualVolume.toFixed(1)}\t${row.difference.toFixed(1)}\n`;
             });
             
             navigator.clipboard.writeText(text).then(() => {
