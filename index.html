@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Sheet Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #eee;
+            padding: 15px;
+            margin: 0;
+        }
+        h1 {
+            color: #00d9ff;
+            text-align: center;
+            font-size: 22px;
+        }
+        .card {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-right: 4px solid #00d9ff;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #a0a0b0;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #0f3460;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #00d9ff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        #result {
+            background-color: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        .warning {
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+        .safe {
+            color: #00ff88;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🛢️ Trip Sheet Calculator</h1>
+
+    <div class="card">
+        <label>نوع الأنبوب (Component):</label>
+        <select id="component">
+            <option value="0.0076">Drill Pipe (5")</option>
+            <option value="0.0179">HWDP</option>
+            <option value="0.0349">Drill Collar</option>
+        </select>
+
+        <label>طول الـ Stand (قدم):</label>
+        <input type="number" id="standLength" value="93" step="0.1">
+
+        <label>عدد الـ Stands المسحوبة:</label>
+        <input type="number" id="standsPulled" value="5" step="1">
+
+        <label>قراءة Trip Tank الفعلية (برميل):</label>
+        <input type="number" id="actualVolume" value="0" step="0.1">
+    </div>
+
+    <button onclick="calculateTrip()">احسب الآن</button>
+
+    <div id="result"></div>
+
+    <script>
+        function calculateTrip() {
+            const displacementPerFt = parseFloat(document.getElementById('component').value);
+            const standLength = parseFloat(document.getElementById('standLength').value);
+            const standsPulled = parseFloat(document.getElementById('standsPulled').value);
+            const actualVolume = parseFloat(document.getElementById('actualVolume').value);
+
+            const totalLength = standLength * standsPulled;
+            const calculatedVolume = totalLength * displacementPerFt;
+            const difference = actualVolume - calculatedVolume;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+
+            let statusMessage = '';
+            let statusClass = '';
+
+            if (Math.abs(difference) < 1.5) {
+                statusMessage = '✅ الوضع آمن - الفرق ضمن الحدود الطبيعية';
+                statusClass = 'safe';
+            } else if (difference > 0) {
+                statusMessage = '⚠️ تحذير: زيادة في الحجم - احتمال تدفق (Kick)!';
+                statusClass = 'warning';
+            } else {
+                statusMessage = '⚠️ تحذير: نقص في الحجم - احتمال فقدان طين (Losses)!';
+                statusClass = 'warning';
+            }
+
+            resultDiv.innerHTML = `
+                <p><strong>الطول الإجمالي:</strong> ${totalLength.toFixed(1)} قدم</p>
+                <p><strong>الحجم المحسوب (المتوقع):</strong> ${calculatedVolume.toFixed(2)} برميل</p>
+                <p><strong>الحجم الفعلي (المقاس):</strong> ${actualVolume.toFixed(2)} برميل</p>
+                <p><strong>الفرق:</strong> ${difference.toFixed(2)} برميل</p>
+                <hr style="border-color:#333;">
+                <p class="${statusClass}">${statusMessage}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
