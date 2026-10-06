@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Sheet Calculator - Metric</title>
+    <title>Trip Sheet Calculator</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -30,6 +30,35 @@
             font-weight: bold;
             margin-right: 5px;
         }
+        /* أزرار اللغة */
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 15px;
+            background-color: #1e293b;
+            padding: 6px;
+            border-radius: 10px;
+        }
+        .lang-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            background-color: #334155;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-btn.active {
+            background-color: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+        }
+        .lang-btn:active { transform: scale(0.96); }
+
         .card {
             background-color: #1e293b;
             border-radius: 12px;
@@ -37,6 +66,10 @@
             margin-bottom: 12px;
             border-right: 4px solid #38bdf8;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        html[dir="ltr"] .card {
+            border-right: none;
+            border-left: 4px solid #38bdf8;
         }
         .card-title {
             color: #38bdf8;
@@ -128,14 +161,15 @@
             border-bottom: 2px solid #38bdf8;
             white-space: nowrap;
         }
+        html[dir="ltr"] th { text-align: left; }
         td {
             padding: 7px 6px;
             border-bottom: 1px solid #334155;
             text-align: right;
             color: #e2e8f0;
         }
+        html[dir="ltr"] td { text-align: left; }
         tr:nth-child(even) { background-color: rgba(15, 23, 42, 0.5); }
-        tr:hover { background-color: rgba(56, 189, 248, 0.1); }
         .badge {
             display: inline-block;
             padding: 2px 6px;
@@ -177,13 +211,20 @@
 </head>
 <body>
 
-    <h1>🛢️ Trip Sheet Calculator <span class="unit-badge">Metric</span></h1>
+    <h1>🛢️ <span data-i18n="title">Trip Sheet Calculator</span> <span class="unit-badge">Metric</span></h1>
+
+    <!-- أزرار اللغة -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">🇩🇿 العربية</button>
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">🇬🇧 English</button>
+        <button class="lang-btn" onclick="setLanguage('fr')" id="btn-fr">🇫🇷 Français</button>
+    </div>
 
     <!-- إدخال البيانات -->
     <div class="card">
-        <div class="card-title">⚙️ بيانات الأنبوب (Pipe Data)</div>
+        <div class="card-title" data-i18n="pipeData">⚙️ Pipe Data</div>
         
-        <label>نوع الأنبوب (Component):</label>
+        <label data-i18n="component">Component:</label>
         <select id="component" onchange="toggleCustom()">
             <option value="5,4.276">Drill Pipe (5" - 19.5 ppf)</option>
             <option value="5,4">Drill Pipe (5" - 25.6 ppf)</option>
@@ -191,17 +232,17 @@
             <option value="6.5,2.812">Drill Collar (6.5")</option>
             <option value="6.75,2.812">Drill Collar (6.75")</option>
             <option value="5,3">HWDP (5")</option>
-            <option value="custom">مخصص (Custom)</option>
+            <option value="custom" data-i18n="customOption">Custom</option>
         </select>
 
         <div class="custom-fields" id="customFields">
             <div class="row">
                 <div>
-                    <label>القطر الخارجي OD (inch):</label>
+                    <label data-i18n="od">Outside Diameter OD (inch):</label>
                     <input type="number" id="od" value="5" step="0.001">
                 </div>
                 <div>
-                    <label>القطر الداخلي ID (inch):</label>
+                    <label data-i18n="id">Inside Diameter ID (inch):</label>
                     <input type="number" id="id" value="4.276" step="0.001">
                 </div>
             </div>
@@ -209,11 +250,11 @@
 
         <div class="row">
             <div>
-                <label>طول الـ Stand (متر):</label>
+                <label data-i18n="standLength">Stand Length (m):</label>
                 <input type="number" id="standLength" value="28.5" step="0.01">
             </div>
             <div>
-                <label>عدد الـ Stands:</label>
+                <label data-i18n="standsPulled">Number of Stands:</label>
                 <input type="number" id="standsPulled" value="1" step="1">
             </div>
         </div>
@@ -221,49 +262,49 @@
 
     <!-- قراءات Trip Tank -->
     <div class="card">
-        <div class="card-title">📊 قراءات Trip Tank</div>
+        <div class="card-title" data-i18n="tripTankReadings">📊 Trip Tank Readings</div>
         
         <div class="row">
             <div>
-                <label>قراءة قبل السحب (L):</label>
+                <label data-i18n="beforeVolume">Before Pulling (L):</label>
                 <input type="number" id="beforeVolume" value="0" step="1">
             </div>
             <div>
-                <label>قراءة بعد السحب (L):</label>
+                <label data-i18n="afterVolume">After Pulling (L):</label>
                 <input type="number" id="afterVolume" value="0" step="1">
             </div>
         </div>
-        <div class="hint">💡 الفرق بين القراءتين هو الحجم الفعلي الذي دخل إلى Trip Tank (باللتر).</div>
+        <div class="hint" data-i18n="tankHint">💡 The difference between the two readings is the actual volume that entered the Trip Tank.</div>
     </div>
 
     <!-- زر الحساب -->
-    <button class="btn btn-primary" onclick="calculateTrip()">احسب الآن (Calculate)</button>
+    <button class="btn btn-primary" onclick="calculateTrip()" data-i18n="calculateBtn">Calculate</button>
 
     <!-- النتائج -->
     <div class="card" id="result">
-        <div class="card-title">📋 نتيجة الحساب</div>
+        <div class="card-title" data-i18n="resultTitle">📋 Calculation Result</div>
         <div id="resultContent"></div>
-        <button class="btn btn-success" onclick="addToTable()">➕ إضافة إلى Trip Sheet</button>
+        <button class="btn btn-success" onclick="addToTable()" data-i18n="addToSheet">➕ Add to Trip Sheet</button>
     </div>
 
     <!-- الإحصائيات -->
     <div class="card" id="statsCard" style="display:none;">
-        <div class="card-title">📈 ملخص Trip Sheet</div>
+        <div class="card-title" data-i18n="summaryTitle">📈 Trip Sheet Summary</div>
         <div class="stats-grid">
             <div class="stat-box">
-                <div class="stat-label">إجمالي الطول</div>
+                <div class="stat-label" data-i18n="totalLength">Total Length</div>
                 <div class="stat-value" id="statLength">0</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">إجمالي المتوقع</div>
+                <div class="stat-label" data-i18n="totalExpected">Total Expected</div>
                 <div class="stat-value" id="statExpected">0</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">إجمالي الفعلي</div>
+                <div class="stat-label" data-i18n="totalActual">Total Actual</div>
                 <div class="stat-value" id="statActual">0</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">الفرق الكلي</div>
+                <div class="stat-label" data-i18n="totalDiff">Total Difference</div>
                 <div class="stat-value" id="statDiff">0</div>
             </div>
         </div>
@@ -272,18 +313,18 @@
 
     <!-- الجدول -->
     <div class="card" id="tableCard" style="display:none;">
-        <div class="card-title">📋 Trip Sheet</div>
+        <div class="card-title" data-i18n="tripSheetTitle">📋 Trip Sheet</div>
         <div class="table-container">
             <table id="tripTable">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>النوع</th>
-                        <th>الطول (m)</th>
-                        <th>المتوقع (L)</th>
-                        <th>الفعلي (L)</th>
-                        <th>الفرق (L)</th>
-                        <th>الحالة</th>
+                        <th data-i18n="colType">Type</th>
+                        <th data-i18n="colLength">Length (m)</th>
+                        <th data-i18n="colExpected">Expected (L)</th>
+                        <th data-i18n="colActual">Actual (L)</th>
+                        <th data-i18n="colDiff">Diff (L)</th>
+                        <th data-i18n="colStatus">Status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -291,15 +332,223 @@
             </table>
         </div>
         <div class="btn-row">
-            <button class="btn btn-secondary" onclick="copyTable()">📋 نسخ</button>
-            <button class="btn btn-danger" onclick="clearTable()">🗑️ مسح الكل</button>
+            <button class="btn btn-secondary" onclick="copyTable()" data-i18n="copyBtn">📋 Copy</button>
+            <button class="btn btn-danger" onclick="clearTable()" data-i18n="clearBtn">🗑️ Clear All</button>
         </div>
     </div>
 
     <script>
-        // ثوابت التحويل
-        const FT_TO_M = 0.3048;           // 1 قدم = 0.3048 متر
-        const BBL_TO_L = 158.987;          // 1 برميل = 158.987 لتر
+        // ============ الترجمات ============
+        const translations = {
+            ar: {
+                title: "حاسبة ورقة السفر",
+                pipeData: "⚙️ بيانات الأنبوب",
+                component: "نوع الأنبوب:",
+                customOption: "مخصص",
+                od: "القطر الخارجي OD (بوصة):",
+                id: "القطر الداخلي ID (بوصة):",
+                standLength: "طول الـ Stand (متر):",
+                standsPulled: "عدد الـ Stands:",
+                tripTankReadings: "📊 قراءات Trip Tank",
+                beforeVolume: "قراءة قبل السحب (لتر):",
+                afterVolume: "قراءة بعد السحب (لتر):",
+                tankHint: "💡 الفرق بين القراءتين هو الحجم الفعلي الذي دخل إلى Trip Tank.",
+                calculateBtn: "احسب الآن (Calculate)",
+                resultTitle: "📋 نتيجة الحساب",
+                addToSheet: "➕ إضافة إلى Trip Sheet",
+                summaryTitle: "📈 ملخص Trip Sheet",
+                totalLength: "إجمالي الطول",
+                totalExpected: "إجمالي المتوقع",
+                totalActual: "إجمالي الفعلي",
+                totalDiff: "الفرق الكلي",
+                tripSheetTitle: "📋 Trip Sheet",
+                colType: "النوع",
+                colLength: "الطول (m)",
+                colExpected: "المتوقع (L)",
+                colActual: "الفعلي (L)",
+                colDiff: "الفرق (L)",
+                colStatus: "الحالة",
+                copyBtn: "📋 نسخ",
+                clearBtn: "🗑️ مسح الكل",
+                // نتائج
+                pipeType: "نوع الأنبوب:",
+                standsCount: "عدد الـ Stands:",
+                totalLenLabel: "الطول الإجمالي:",
+                displacementLabel: "الإزاحة (L/m):",
+                capacityLabel: "السعة (L/m):",
+                expectedVol: "الحجم المتوقع:",
+                actualVol: "الحجم الفعلي:",
+                diffLabel: "الفرق:",
+                expectedM3: "الحجم المتوقع (m³):",
+                totalLabel: "الإجمالي",
+                // الحالات
+                safeStatus: "✅ الوضع آمن - ضمن الحدود الطبيعية",
+                kickWarning: "⚠️ تحذير: زيادة - احتمال تدفق (Kick)!",
+                lossesWarning: "⚠️ تحذير: نقص - احتمال فقدان طين (Losses)!",
+                overallSafe: "✅ الحالة العامة: آمن",
+                overallKick: "⚠️ تحذير عام: زيادة - احتمال Kick!",
+                overallLosses: "⚠️ تحذير عام: نقص - احتمال Losses!",
+                // رسائل
+                alertFillAll: "الرجاء إدخال جميع البيانات المطلوبة",
+                confirmDelete: "هل تريد حذف هذا الصف؟",
+                confirmClear: "هل تريد مسح الجدول بالكامل؟",
+                copySuccess: "✅ تم نسخ الجدول بنجاح!",
+                copyFail: "تعذر النسخ. يرجى تحديد الجدول يدوياً.",
+                meter: "م",
+                liter: "لتر",
+                badgeOK: "OK",
+                badgeWarn: "!"
+            },
+            en: {
+                title: "Trip Sheet Calculator",
+                pipeData: "⚙️ Pipe Data",
+                component: "Component:",
+                customOption: "Custom",
+                od: "Outside Diameter OD (inch):",
+                id: "Inside Diameter ID (inch):",
+                standLength: "Stand Length (m):",
+                standsPulled: "Number of Stands:",
+                tripTankReadings: "📊 Trip Tank Readings",
+                beforeVolume: "Before Pulling (L):",
+                afterVolume: "After Pulling (L):",
+                tankHint: "💡 The difference between the two readings is the actual volume that entered the Trip Tank.",
+                calculateBtn: "Calculate",
+                resultTitle: "📋 Calculation Result",
+                addToSheet: "➕ Add to Trip Sheet",
+                summaryTitle: "📈 Trip Sheet Summary",
+                totalLength: "Total Length",
+                totalExpected: "Total Expected",
+                totalActual: "Total Actual",
+                totalDiff: "Total Difference",
+                tripSheetTitle: "📋 Trip Sheet",
+                colType: "Type",
+                colLength: "Length (m)",
+                colExpected: "Expected (L)",
+                colActual: "Actual (L)",
+                colDiff: "Diff (L)",
+                colStatus: "Status",
+                copyBtn: "📋 Copy",
+                clearBtn: "🗑️ Clear All",
+                pipeType: "Pipe Type:",
+                standsCount: "Number of Stands:",
+                totalLenLabel: "Total Length:",
+                displacementLabel: "Displacement (L/m):",
+                capacityLabel: "Capacity (L/m):",
+                expectedVol: "Expected Volume:",
+                actualVol: "Actual Volume:",
+                diffLabel: "Difference:",
+                expectedM3: "Expected Volume (m³):",
+                totalLabel: "Total",
+                safeStatus: "✅ Safe - Within normal limits",
+                kickWarning: "⚠️ Warning: Excess volume - Possible KICK!",
+                lossesWarning: "⚠️ Warning: Volume loss - Possible LOSSES!",
+                overallSafe: "✅ Overall Status: SAFE",
+                overallKick: "⚠️ Overall Warning: Excess - Possible KICK!",
+                overallLosses: "⚠️ Overall Warning: Loss - Possible LOSSES!",
+                alertFillAll: "Please fill in all required fields",
+                confirmDelete: "Delete this row?",
+                confirmClear: "Clear the entire table?",
+                copySuccess: "✅ Table copied successfully!",
+                copyFail: "Copy failed. Please select manually.",
+                meter: "m",
+                liter: "L",
+                badgeOK: "OK",
+                badgeWarn: "!"
+            },
+            fr: {
+                title: "Calculateur de Feuille de Voyage",
+                pipeData: "⚙️ Données du Tubage",
+                component: "Composant:",
+                customOption: "Personnalisé",
+                od: "Diamètre Extérieur OD (pouce):",
+                id: "Diamètre Intérieur ID (pouce):",
+                standLength: "Longueur du Stand (m):",
+                standsPulled: "Nombre de Stands:",
+                tripTankReadings: "📊 Lectures du Trip Tank",
+                beforeVolume: "Avant Extraction (L):",
+                afterVolume: "Après Extraction (L):",
+                tankHint: "💡 La différence entre les deux lectures est le volume réel entré dans le Trip Tank.",
+                calculateBtn: "Calculer",
+                resultTitle: "📋 Résultat du Calcul",
+                addToSheet: "➕ Ajouter à la Feuille",
+                summaryTitle: "📈 Résumé de la Feuille",
+                totalLength: "Longueur Totale",
+                totalExpected: "Total Attendu",
+                totalActual: "Total Réel",
+                totalDiff: "Différence Totale",
+                tripSheetTitle: "📋 Feuille de Voyage",
+                colType: "Type",
+                colLength: "Longueur (m)",
+                colExpected: "Attendu (L)",
+                colActual: "Réel (L)",
+                colDiff: "Diff (L)",
+                colStatus: "Statut",
+                copyBtn: "📋 Copier",
+                clearBtn: "🗑️ Tout Effacer",
+                pipeType: "Type de Tubage:",
+                standsCount: "Nombre de Stands:",
+                totalLenLabel: "Longueur Totale:",
+                displacementLabel: "Déplacement (L/m):",
+                capacityLabel: "Capacité (L/m):",
+                expectedVol: "Volume Attendu:",
+                actualVol: "Volume Réel:",
+                diffLabel: "Différence:",
+                expectedM3: "Volume Attendu (m³):",
+                totalLabel: "Total",
+                safeStatus: "✅ Sécurisé - Dans les limites normales",
+                kickWarning: "⚠️ Alerte: Volume excédentaire - KICK possible!",
+                lossesWarning: "⚠️ Alerte: Perte de volume - PERTES possibles!",
+                overallSafe: "✅ Statut Global: SÉCURISÉ",
+                overallKick: "⚠️ Alerte Globale: Excès - KICK possible!",
+                overallLosses: "⚠️ Alerte Globale: Perte - PERTES possibles!",
+                alertFillAll: "Veuillez remplir tous les champs requis",
+                confirmDelete: "Supprimer cette ligne?",
+                confirmClear: "Effacer tout le tableau?",
+                copySuccess: "✅ Tableau copié avec succès!",
+                copyFail: "Échec de la copie. Sélectionnez manuellement.",
+                meter: "m",
+                liter: "L",
+                badgeOK: "OK",
+                badgeWarn: "!"
+            }
+        };
+
+        let currentLang = 'ar';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            // تغيير اتجاه الصفحة
+            document.getElementById('htmlRoot').setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.getElementById('htmlRoot').setAttribute('lang', lang);
+
+            // تحديث كل النصوص
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    el.textContent = t[key];
+                }
+            });
+
+            // تحديث أزرار اللغة
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
+
+            // حفظ اللغة
+            localStorage.setItem('tripSheetLang', lang);
+
+            // إعادة عرض الجدول
+            if (tripData.length > 0) renderTable();
+        }
+
+        function t(key) {
+            return translations[currentLang][key] || key;
+        }
+
+        // ============ ثوابت ============
+        const FT_TO_M = 0.3048;
+        const BBL_TO_L = 158.987;
 
         const pipeData = {
             "5,4.276": { od: 5, id: 4.276, name: "DP 5\" 19.5" },
@@ -344,36 +593,28 @@
             const afterVolume = parseFloat(document.getElementById('afterVolume').value);
 
             if (!pipe || !standLength || !standsPulled) {
-                alert("الرجاء إدخال جميع البيانات المطلوبة");
+                alert(t('alertFillAll'));
                 return;
             }
 
-            const totalLength = standLength * standsPulled; // متر
-
-            // الإزاحة (bbl/ft) ثم تحويلها إلى (L/m)
+            const totalLength = standLength * standsPulled;
             const displacementPerFtBbl = (Math.pow(pipe.od, 2) - Math.pow(pipe.id, 2)) / 1029.4;
             const displacementPerM_L = displacementPerFtBbl * BBL_TO_L / FT_TO_M;
-
-            // السعة (bbl/ft) ثم تحويلها إلى (L/m)
             const capacityPerFtBbl = Math.pow(pipe.id, 2) / 1029.4;
             const capacityPerM_L = capacityPerFtBbl * BBL_TO_L / FT_TO_M;
-
-            // الحجم المتوقع باللتر
             const calculatedVolume = totalLength * displacementPerM_L;
-
-            // الحجم الفعلي باللتر
             const actualVolume = afterVolume - beforeVolume;
             const difference = actualVolume - calculatedVolume;
 
             let statusMessage = '', statusClass = '', badge = '';
-            if (Math.abs(difference) < 200) { // معيار: 200 لتر (≈ 1.26 برميل)
-                statusMessage = '✅ الوضع آمن - ضمن الحدود الطبيعية';
+            if (Math.abs(difference) < 100) {
+                statusMessage = t('safeStatus');
                 statusClass = 'safe'; badge = 'safe';
-            } else if (difference > 200) {
-                statusMessage = '⚠️ تحذير: زيادة - احتمال تدفق (Kick)!';
+            } else if (difference > 100) {
+                statusMessage = t('kickWarning');
                 statusClass = 'warning'; badge = 'warn';
             } else {
-                statusMessage = '⚠️ تحذير: نقص - احتمال فقدان طين (Losses)!';
+                statusMessage = t('lossesWarning');
                 statusClass = 'warning'; badge = 'warn';
             }
 
@@ -384,9 +625,7 @@
                 calculatedVolume: calculatedVolume,
                 actualVolume: actualVolume,
                 difference: difference,
-                status: badge,
-                statusMessage: statusMessage,
-                statusClass: statusClass
+                status: badge
             };
 
             const resultDiv = document.getElementById('result');
@@ -394,16 +633,16 @@
             resultDiv.style.display = 'block';
 
             resultContent.innerHTML = `
-                <div class="result-row"><span class="result-label">نوع الأنبوب:</span><span class="result-value">${pipe.name}</span></div>
+                <div class="result-row"><span class="result-label">${t('pipeType')}</span><span class="result-value">${pipe.name}</span></div>
                 <div class="result-row"><span class="result-label">OD / ID:</span><span class="result-value">${pipe.od}" / ${pipe.id}"</span></div>
-                <div class="result-row"><span class="result-label">عدد الـ Stands:</span><span class="result-value">${standsPulled}</span></div>
-                <div class="result-row"><span class="result-label">الطول الإجمالي:</span><span class="result-value">${totalLength.toFixed(2)} م</span></div>
-                <div class="result-row"><span class="result-label">الإزاحة (L/m):</span><span class="result-value">${displacementPerM_L.toFixed(2)}</span></div>
-                <div class="result-row"><span class="result-label">السعة (L/m):</span><span class="result-value">${capacityPerM_L.toFixed(2)}</span></div>
-                <div class="result-row"><span class="result-label">الحجم المتوقع:</span><span class="result-value">${calculatedVolume.toFixed(1)} لتر</span></div>
-                <div class="result-row"><span class="result-label">الحجم الفعلي:</span><span class="result-value">${actualVolume.toFixed(1)} لتر</span></div>
-                <div class="result-row"><span class="result-label">الفرق:</span><span class="result-value">${difference.toFixed(1)} لتر</span></div>
-                <div class="result-row"><span class="result-label">الحجم المتوقع (m³):</span><span class="result-value">${(calculatedVolume/1000).toFixed(3)} م³</span></div>
+                <div class="result-row"><span class="result-label">${t('standsCount')}</span><span class="result-value">${standsPulled}</span></div>
+                <div class="result-row"><span class="result-label">${t('totalLenLabel')}</span><span class="result-value">${totalLength.toFixed(2)} ${t('meter')}</span></div>
+                <div class="result-row"><span class="result-label">${t('displacementLabel')}</span><span class="result-value">${displacementPerM_L.toFixed(2)}</span></div>
+                <div class="result-row"><span class="result-label">${t('capacityLabel')}</span><span class="result-value">${capacityPerM_L.toFixed(2)}</span></div>
+                <div class="result-row"><span class="result-label">${t('expectedVol')}</span><span class="result-value">${calculatedVolume.toFixed(1)} ${t('liter')}</span></div>
+                <div class="result-row"><span class="result-label">${t('actualVol')}</span><span class="result-value">${actualVolume.toFixed(1)} ${t('liter')}</span></div>
+                <div class="result-row"><span class="result-label">${t('diffLabel')}</span><span class="result-value">${difference.toFixed(1)} ${t('liter')}</span></div>
+                <div class="result-row"><span class="result-label">${t('expectedM3')}</span><span class="result-value">${(calculatedVolume/1000).toFixed(3)} m³</span></div>
                 <div class="status-box ${statusClass}">${statusMessage}</div>
             `;
 
@@ -448,7 +687,7 @@
                         <td>${row.calculatedVolume.toFixed(1)}</td>
                         <td>${row.actualVolume.toFixed(1)}</td>
                         <td>${row.difference.toFixed(1)}</td>
-                        <td><span class="badge badge-${row.status}">${row.status === 'safe' ? 'OK' : '!'}</span></td>
+                        <td><span class="badge badge-${row.status}">${row.status === 'safe' ? t('badgeOK') : t('badgeWarn')}</span></td>
                         <td><button class="delete-btn" onclick="deleteRow(${i})">✕</button></td>
                     </tr>
                 `;
@@ -456,7 +695,7 @@
 
             html += `
                 <tr class="total-row">
-                    <td colspan="2">الإجمالي</td>
+                    <td colspan="2">${t('totalLabel')}</td>
                     <td>${totalLength.toFixed(2)}</td>
                     <td>${totalExpected.toFixed(1)}</td>
                     <td>${totalActual.toFixed(1)}</td>
@@ -467,37 +706,37 @@
 
             tbody.innerHTML = html;
 
-            document.getElementById('statLength').textContent = totalLength.toFixed(2) + " m";
-            document.getElementById('statExpected').textContent = totalExpected.toFixed(1) + " L";
-            document.getElementById('statActual').textContent = totalActual.toFixed(1) + " L";
+            document.getElementById('statLength').textContent = totalLength.toFixed(2) + " " + t('meter');
+            document.getElementById('statExpected').textContent = totalExpected.toFixed(1) + " " + t('liter');
+            document.getElementById('statActual').textContent = totalActual.toFixed(1) + " " + t('liter');
             
             const diffEl = document.getElementById('statDiff');
-            diffEl.textContent = totalDiff.toFixed(1) + " L";
-            diffEl.className = 'stat-value ' + (Math.abs(totalDiff) < 200 ? 'ok' : 'warn');
+            diffEl.textContent = totalDiff.toFixed(1) + " " + t('liter');
+            diffEl.className = 'stat-value ' + (Math.abs(totalDiff) < 100 ? 'ok' : 'warn');
 
             const statusEl = document.getElementById('overallStatus');
             statusEl.style.display = 'block';
-            if (Math.abs(totalDiff) < 200) {
+            if (Math.abs(totalDiff) < 100) {
                 statusEl.className = 'status-box safe';
-                statusEl.textContent = '✅ الحالة العامة: آمن';
-            } else if (totalDiff > 200) {
+                statusEl.textContent = t('overallSafe');
+            } else if (totalDiff > 100) {
                 statusEl.className = 'status-box warning';
-                statusEl.textContent = '⚠️ تحذير عام: زيادة - احتمال Kick!';
+                statusEl.textContent = t('overallKick');
             } else {
                 statusEl.className = 'status-box warning';
-                statusEl.textContent = '⚠️ تحذير عام: نقص - احتمال Losses!';
+                statusEl.textContent = t('overallLosses');
             }
         }
 
         function deleteRow(index) {
-            if (confirm("هل تريد حذف هذا الصف؟")) {
+            if (confirm(t('confirmDelete'))) {
                 tripData.splice(index, 1);
                 renderTable();
             }
         }
 
         function clearTable() {
-            if (confirm("هل تريد مسح الجدول بالكامل؟")) {
+            if (confirm(t('confirmClear'))) {
                 tripData = [];
                 renderTable();
             }
@@ -505,18 +744,4 @@
 
         function copyTable() {
             let text = "Trip Sheet (Metric)\n=====================\n";
-            text += "#\tType\tLength(m)\tExpected(L)\tActual(L)\tDiff(L)\n";
-            tripData.forEach((row, i) => {
-                text += `${i+1}\t${row.pipe.name}\t${row.totalLength.toFixed(2)}\t${row.calculatedVolume.toFixed(1)}\t${row.actualVolume.toFixed(1)}\t${row.difference.toFixed(1)}\n`;
-            });
-            
-            navigator.clipboard.writeText(text).then(() => {
-                alert("✅ تم نسخ الجدول بنجاح!");
-            }).catch(() => {
-                alert("تعذر النسخ. يرجى تحديد الجدول يدوياً.");
-            });
-        }
-    </script>
-
-</body>
-</html>
+            text += "#\
