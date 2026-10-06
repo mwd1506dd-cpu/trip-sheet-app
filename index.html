@@ -17,20 +17,20 @@
         h1 {
             color: #38bdf8;
             text-align: center;
-            font-size: 22px;
-            margin: 10px 0 20px 0;
+            font-size: 20px;
+            margin: 10px 0 15px 0;
         }
         .card {
             background-color: #1e293b;
             border-radius: 12px;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-right: 4px solid #38bdf8;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
         .card-title {
             color: #38bdf8;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             margin-bottom: 10px;
             border-bottom: 1px solid #334155;
@@ -38,108 +38,140 @@
         }
         label {
             display: block;
-            margin-top: 12px;
-            margin-bottom: 6px;
-            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-size: 13px;
             color: #94a3b8;
         }
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 11px;
             border-radius: 8px;
             border: 1px solid #334155;
             background-color: #0f172a;
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
         }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #38bdf8;
-        }
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-        .row > div {
-            flex: 1;
-        }
-        button {
+        input:focus, select:focus { outline: none; border-color: #38bdf8; }
+        .row { display: flex; gap: 8px; }
+        .row > div { flex: 1; }
+        .btn {
             width: 100%;
-            padding: 16px;
-            background-color: #38bdf8;
-            color: #0f172a;
+            padding: 14px;
             border: none;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            margin-top: 15px;
+            margin-top: 10px;
             cursor: pointer;
-            transition: background 0.2s;
         }
-        button:active {
-            background-color: #0ea5e9;
-        }
-        #result {
-            display: none;
-        }
+        .btn-primary { background-color: #38bdf8; color: #0f172a; }
+        .btn-primary:active { background-color: #0ea5e9; }
+        .btn-success { background-color: #22c55e; color: #fff; margin-top: 10px; }
+        .btn-danger { background-color: #ef4444; color: #fff; }
+        .btn-secondary { background-color: #475569; color: #fff; }
+        .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-row .btn { margin-top: 0; }
         .result-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #334155;
-            font-size: 15px;
+            font-size: 14px;
         }
-        .result-row:last-child {
-            border-bottom: none;
-        }
-        .result-label {
-            color: #94a3b8;
-        }
-        .result-value {
-            font-weight: bold;
-            color: #fff;
-        }
+        .result-row:last-child { border-bottom: none; }
+        .result-label { color: #94a3b8; }
+        .result-value { font-weight: bold; color: #fff; }
         .status-box {
-            margin-top: 15px;
-            padding: 15px;
+            margin-top: 12px;
+            padding: 12px;
             border-radius: 8px;
             text-align: center;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
         }
-        .safe {
-            background-color: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-            border: 2px solid #22c55e;
-        }
-        .warning {
-            background-color: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-            border: 2px solid #ef4444;
-        }
-        .caution {
-            background-color: rgba(251, 191, 36, 0.15);
-            color: #fbbf24;
-            border: 2px solid #fbbf24;
-        }
-        .custom-fields {
-            display: none;
+        .safe { background-color: rgba(34, 197, 94, 0.15); color: #22c55e; border: 2px solid #22c55e; }
+        .warning { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border: 2px solid #ef4444; }
+        .custom-fields { display: none; margin-top: 8px; }
+        .custom-fields.active { display: block; }
+        .hint { font-size: 12px; color: #64748b; margin-top: 4px; }
+        #result { display: none; }
+
+        /* جدول Trip Sheet */
+        .table-container {
+            overflow-x: auto;
             margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #334155;
         }
-        .custom-fields.active {
-            display: block;
-        }
-        .hint {
+        table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 12px;
-            color: #64748b;
-            margin-top: 4px;
+            min-width: 600px;
         }
+        th {
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 8px 6px;
+            text-align: right;
+            font-weight: bold;
+            border-bottom: 2px solid #38bdf8;
+            white-space: nowrap;
+        }
+        td {
+            padding: 7px 6px;
+            border-bottom: 1px solid #334155;
+            text-align: right;
+            color: #e2e8f0;
+        }
+        tr:nth-child(even) { background-color: rgba(15, 23, 42, 0.5); }
+        tr:hover { background-color: rgba(56, 189, 248, 0.1); }
+        .empty-row { text-align: center; color: #64748b; padding: 20px; }
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .badge-safe { background-color: #22c55e; color: #fff; }
+        .badge-warn { background-color: #ef4444; color: #fff; }
+        .total-row { background-color: #0f172a !important; font-weight: bold; }
+        .total-row td { color: #38bdf8; border-top: 2px solid #38bdf8; padding: 10px 6px; }
+        .delete-btn {
+            background-color: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .stat-box {
+            background-color: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+        .stat-label { font-size: 11px; color: #94a3b8; }
+        .stat-value { font-size: 16px; font-weight: bold; color: #38bdf8; margin-top: 4px; }
+        .stat-value.warn { color: #ef4444; }
+        .stat-value.ok { color: #22c55e; }
     </style>
 </head>
 <body>
 
     <h1>🛢️ Trip Sheet Calculator Pro</h1>
 
+    <!-- إدخال البيانات -->
     <div class="card">
         <div class="card-title">⚙️ بيانات الأنبوب (Pipe Data)</div>
         
@@ -167,42 +199,107 @@
             </div>
         </div>
 
-        <label>طول الـ Stand (قدم):</label>
-        <input type="number" id="standLength" value="93" step="0.1">
-
-        <label>عدد الـ Stands المسحوبة:</label>
-        <input type="number" id="standsPulled" value="5" step="1">
+        <div class="row">
+            <div>
+                <label>طول الـ Stand (قدم):</label>
+                <input type="number" id="standLength" value="93" step="0.1">
+            </div>
+            <div>
+                <label>عدد الـ Stands:</label>
+                <input type="number" id="standsPulled" value="1" step="1">
+            </div>
+        </div>
     </div>
 
+    <!-- قراءات Trip Tank -->
     <div class="card">
         <div class="card-title">📊 قراءات Trip Tank</div>
         
-        <label>قراءة Trip Tank قبل السحب (برميل):</label>
-        <input type="number" id="beforeVolume" value="0" step="0.1">
-
-        <label>قراءة Trip Tank بعد السحب (برميل):</label>
-        <input type="number" id="afterVolume" value="0" step="0.1">
-
+        <div class="row">
+            <div>
+                <label>قراءة قبل السحب (bbl):</label>
+                <input type="number" id="beforeVolume" value="0" step="0.1">
+            </div>
+            <div>
+                <label>قراءة بعد السحب (bbl):</label>
+                <input type="number" id="afterVolume" value="0" step="0.1">
+            </div>
+        </div>
         <div class="hint">💡 الفرق بين القراءتين هو الحجم الفعلي الذي دخل إلى Trip Tank.</div>
     </div>
 
-    <button onclick="calculateTrip()">احسب الآن (Calculate)</button>
+    <!-- زر الحساب -->
+    <button class="btn btn-primary" onclick="calculateTrip()">احسب الآن (Calculate)</button>
 
+    <!-- النتائج -->
     <div class="card" id="result">
-        <div class="card-title">📋 النتائج</div>
+        <div class="card-title">📋 نتيجة الحساب</div>
         <div id="resultContent"></div>
+        <button class="btn btn-success" onclick="addToTable()">➕ إضافة إلى Trip Sheet</button>
+    </div>
+
+    <!-- الإحصائيات -->
+    <div class="card" id="statsCard" style="display:none;">
+        <div class="card-title">📈 ملخص Trip Sheet</div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">إجمالي الطول</div>
+                <div class="stat-value" id="statLength">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">إجمالي المتوقع</div>
+                <div class="stat-value" id="statExpected">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">إجمالي الفعلي</div>
+                <div class="stat-value" id="statActual">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">الفرق الكلي</div>
+                <div class="stat-value" id="statDiff">0</div>
+            </div>
+        </div>
+        <div id="overallStatus" class="status-box" style="display:none;"></div>
+    </div>
+
+    <!-- الجدول -->
+    <div class="card" id="tableCard" style="display:none;">
+        <div class="card-title">📋 Trip Sheet</div>
+        <div class="table-container">
+            <table id="tripTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>النوع</th>
+                        <th>الطول</th>
+                        <th>المتوقع</th>
+                        <th>الفعلي</th>
+                        <th>الفرق</th>
+                        <th>الحالة</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-secondary" onclick="copyTable()">📋 نسخ</button>
+            <button class="btn btn-danger" onclick="clearTable()">🗑️ مسح الكل</button>
+        </div>
     </div>
 
     <script>
-        // خصائص الأنابيب (OD, ID) بالبوصة
         const pipeData = {
-            "5,4.276": { od: 5, id: 4.276, name: "Drill Pipe 5\" - 19.5 ppf" },
-            "5,4": { od: 5, id: 4, name: "Drill Pipe 5\" - 25.6 ppf" },
-            "3.5,2.764": { od: 3.5, id: 2.764, name: "Drill Pipe 3.5\"" },
-            "6.5,2.812": { od: 6.5, id: 2.812, name: "Drill Collar 6.5\"" },
-            "6.75,2.812": { od: 6.75, id: 2.812, name: "Drill Collar 6.75\"" },
+            "5,4.276": { od: 5, id: 4.276, name: "DP 5\" 19.5" },
+            "5,4": { od: 5, id: 4, name: "DP 5\" 25.6" },
+            "3.5,2.764": { od: 3.5, id: 2.764, name: "DP 3.5\"" },
+            "6.5,2.812": { od: 6.5, id: 2.812, name: "DC 6.5\"" },
+            "6.75,2.812": { od: 6.75, id: 2.812, name: "DC 6.75\"" },
             "5,3": { od: 5, id: 3, name: "HWDP 5\"" }
         };
+
+        let tripData = [];
+        let lastCalculation = null;
 
         function toggleCustom() {
             const select = document.getElementById('component');
@@ -220,7 +317,7 @@
                 return {
                     od: parseFloat(document.getElementById('od').value),
                     id: parseFloat(document.getElementById('id').value),
-                    name: "Custom Pipe"
+                    name: `Custom ${document.getElementById('od').value}"`
                 };
             } else {
                 return pipeData[select.value];
@@ -228,91 +325,178 @@
         }
 
         function calculateTrip() {
-            // قراءة القيم
             const pipe = getPipeDimensions();
             const standLength = parseFloat(document.getElementById('standLength').value);
             const standsPulled = parseFloat(document.getElementById('standsPulled').value);
             const beforeVolume = parseFloat(document.getElementById('beforeVolume').value);
             const afterVolume = parseFloat(document.getElementById('afterVolume').value);
 
-            // التحقق من المدخلات
             if (!pipe || !standLength || !standsPulled) {
                 alert("الرجاء إدخال جميع البيانات المطلوبة");
                 return;
             }
 
-            // الحسابات
             const totalLength = standLength * standsPulled;
-            
-            // الإزاحة (Displacement) - حجم الطين الذي يخرج من البئر
             const displacementPerFt = (Math.pow(pipe.od, 2) - Math.pow(pipe.id, 2)) / 1029.4;
             const calculatedVolume = totalLength * displacementPerFt;
-
-            // السعة الداخلية (Capacity) - حجم الطين داخل الأنبوب
             const capacityPerFt = Math.pow(pipe.id, 2) / 1029.4;
-            const totalCapacity = totalLength * capacityPerFt;
-
-            // الحجم الفعلي في Trip Tank
             const actualVolume = afterVolume - beforeVolume;
             const difference = actualVolume - calculatedVolume;
 
-            // عرض النتائج
+            let statusMessage = '', statusClass = '', badge = '';
+            if (Math.abs(difference) < 1.5) {
+                statusMessage = '✅ الوضع آمن - ضمن الحدود الطبيعية';
+                statusClass = 'safe'; badge = 'safe';
+            } else if (difference > 1.5) {
+                statusMessage = '⚠️ تحذير: زيادة - احتمال تدفق (Kick)!';
+                statusClass = 'warning'; badge = 'warn';
+            } else {
+                statusMessage = '⚠️ تحذير: نقص - احتمال فقدان طين (Losses)!';
+                statusClass = 'warning'; badge = 'warn';
+            }
+
+            // حفظ الحساب الأخير
+            lastCalculation = {
+                pipe: pipe,
+                stands: standsPulled,
+                totalLength: totalLength,
+                calculatedVolume: calculatedVolume,
+                actualVolume: actualVolume,
+                difference: difference,
+                status: badge,
+                statusMessage: statusMessage,
+                statusClass: statusClass
+            };
+
             const resultDiv = document.getElementById('result');
             const resultContent = document.getElementById('resultContent');
             resultDiv.style.display = 'block';
 
-            let statusMessage = '';
-            let statusClass = '';
-
-            if (Math.abs(difference) < 1.5) {
-                statusMessage = '✅ الوضع آمن - الفرق ضمن الحدود الطبيعية';
-                statusClass = 'safe';
-            } else if (difference > 1.5) {
-                statusMessage = '⚠️ تحذير: زيادة في الحجم - احتمال تدفق (Kick)!';
-                statusClass = 'warning';
-            } else {
-                statusMessage = '⚠️ تحذير: نقص في الحجم - احتمال فقدان طين (Losses)!';
-                statusClass = 'warning';
-            }
-
             resultContent.innerHTML = `
-                <div class="result-row">
-                    <span class="result-label">نوع الأنبوب:</span>
-                    <span class="result-value">${pipe.name}</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">OD / ID:</span>
-                    <span class="result-value">${pipe.od}" / ${pipe.id}"</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">الطول الإجمالي:</span>
-                    <span class="result-value">${totalLength.toFixed(1)} قدم</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">الإزاحة (bbl/ft):</span>
-                    <span class="result-value">${displacementPerFt.toFixed(4)}</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">السعة الداخلية (bbl/ft):</span>
-                    <span class="result-value">${capacityPerFt.toFixed(4)}</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">الحجم المتوقع (Displacement):</span>
-                    <span class="result-value">${calculatedVolume.toFixed(2)} برميل</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">الحجم الفعلي (Actual):</span>
-                    <span class="result-value">${actualVolume.toFixed(2)} برميل</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">الفرق (Difference):</span>
-                    <span class="result-value">${difference.toFixed(2)} برميل</span>
-                </div>
+                <div class="result-row"><span class="result-label">نوع الأنبوب:</span><span class="result-value">${pipe.name}</span></div>
+                <div class="result-row"><span class="result-label">OD / ID:</span><span class="result-value">${pipe.od}" / ${pipe.id}"</span></div>
+                <div class="result-row"><span class="result-label">عدد الـ Stands:</span><span class="result-value">${standsPulled}</span></div>
+                <div class="result-row"><span class="result-label">الطول الإجمالي:</span><span class="result-value">${totalLength.toFixed(1)} قدم</span></div>
+                <div class="result-row"><span class="result-label">الإزاحة (bbl/ft):</span><span class="result-value">${displacementPerFt.toFixed(4)}</span></div>
+                <div class="result-row"><span class="result-label">الحجم المتوقع:</span><span class="result-value">${calculatedVolume.toFixed(2)} برميل</span></div>
+                <div class="result-row"><span class="result-label">الحجم الفعلي:</span><span class="result-value">${actualVolume.toFixed(2)} برميل</span></div>
+                <div class="result-row"><span class="result-label">الفرق:</span><span class="result-value">${difference.toFixed(2)} برميل</span></div>
                 <div class="status-box ${statusClass}">${statusMessage}</div>
             `;
 
-            // تمرير للنتائج
             resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function addToTable() {
+            if (!lastCalculation) return;
+            tripData.push(lastCalculation);
+            renderTable();
+            // إعادة تعيين قراءات Trip Tank
+            document.getElementById('beforeVolume').value = document.getElementById('afterVolume').value;
+            document.getElementById('afterVolume').value = document.getElementById('afterVolume').value;
+        }
+
+        function renderTable() {
+            const tableCard = document.getElementById('tableCard');
+            const statsCard = document.getElementById('statsCard');
+            const tbody = document.getElementById('tableBody');
+            
+            if (tripData.length === 0) {
+                tableCard.style.display = 'none';
+                statsCard.style.display = 'none';
+                return;
+            }
+
+            tableCard.style.display = 'block';
+            statsCard.style.display = 'block';
+
+            let html = '';
+            let totalLength = 0, totalExpected = 0, totalActual = 0, totalDiff = 0;
+
+            tripData.forEach((row, i) => {
+                totalLength += row.totalLength;
+                totalExpected += row.calculatedVolume;
+                totalActual += row.actualVolume;
+                totalDiff += row.difference;
+
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${row.pipe.name}</td>
+                        <td>${row.totalLength.toFixed(0)}'</td>
+                        <td>${row.calculatedVolume.toFixed(2)}</td>
+                        <td>${row.actualVolume.toFixed(2)}</td>
+                        <td>${row.difference.toFixed(2)}</td>
+                        <td><span class="badge badge-${row.status}">${row.status === 'safe' ? 'OK' : '!'}</span></td>
+                        <td><button class="delete-btn" onclick="deleteRow(${i})">✕</button></td>
+                    </tr>
+                `;
+            });
+
+            // صف الإجمالي
+            html += `
+                <tr class="total-row">
+                    <td colspan="2">الإجمالي</td>
+                    <td>${totalLength.toFixed(0)}'</td>
+                    <td>${totalExpected.toFixed(2)}</td>
+                    <td>${totalActual.toFixed(2)}</td>
+                    <td>${totalDiff.toFixed(2)}</td>
+                    <td colspan="2"></td>
+                </tr>
+            `;
+
+            tbody.innerHTML = html;
+
+            // تحديث الإحصائيات
+            document.getElementById('statLength').textContent = totalLength.toFixed(0) + "'";
+            document.getElementById('statExpected').textContent = totalExpected.toFixed(2) + " bbl";
+            document.getElementById('statActual').textContent = totalActual.toFixed(2) + " bbl";
+            
+            const diffEl = document.getElementById('statDiff');
+            diffEl.textContent = totalDiff.toFixed(2) + " bbl";
+            diffEl.className = 'stat-value ' + (Math.abs(totalDiff) < 1.5 ? 'ok' : 'warn');
+
+            // الحالة العامة
+            const statusEl = document.getElementById('overallStatus');
+            statusEl.style.display = 'block';
+            if (Math.abs(totalDiff) < 1.5) {
+                statusEl.className = 'status-box safe';
+                statusEl.textContent = '✅ الحالة العامة: آمن';
+            } else if (totalDiff > 1.5) {
+                statusEl.className = 'status-box warning';
+                statusEl.textContent = '⚠️ تحذير عام: زيادة - احتمال Kick!';
+            } else {
+                statusEl.className = 'status-box warning';
+                statusEl.textContent = '⚠️ تحذير عام: نقص - احتمال Losses!';
+            }
+        }
+
+        function deleteRow(index) {
+            if (confirm("هل تريد حذف هذا الصف؟")) {
+                tripData.splice(index, 1);
+                renderTable();
+            }
+        }
+
+        function clearTable() {
+            if (confirm("هل تريد مسح الجدول بالكامل؟")) {
+                tripData = [];
+                renderTable();
+            }
+        }
+
+        function copyTable() {
+            let text = "Trip Sheet\n==========\n";
+            text += "#\tType\tLength\tExpected\tActual\tDiff\n";
+            tripData.forEach((row, i) => {
+                text += `${i+1}\t${row.pipe.name}\t${row.totalLength.toFixed(0)}\t${row.calculatedVolume.toFixed(2)}\t${row.actualVolume.toFixed(2)}\t${row.difference.toFixed(2)}\n`;
+            });
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert("✅ تم نسخ الجدول بنجاح!");
+            }).catch(() => {
+                alert("تعذر النسخ. يرجى تحديد الجدول يدوياً.");
+            });
         }
     </script>
 
