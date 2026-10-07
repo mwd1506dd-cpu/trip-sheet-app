@@ -1,0 +1,111 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Install Bubblewrap CLI
+      run: npm install -g @bubblewrap/cli
+    
+    - name: Initialize Bubblewrap
+      run: |
+        mkdir -p apk-build
+        cd apk-build
+        bubblewrap init --manifest https://mwd1506dd-cpu.github.io/trip-sheet-app/manifest.json --directory . --skipPwaValidation || true
+    
+    - name: Update Bubblewrap config
+      run: |
+        cd apk-build
+        cat > twa-manifest.json << 'EOF'
+        {
+          "packageId": "io.github.mwd1506dd_cpu.tripsheet",
+          "host": "mwd1506dd-cpu.github.io",
+          "name": "Trip & Kill Sheet",
+          "launcherName": "TripSheet",
+          "display": "standalone",
+          "themeColor": "#38bdf8",
+          "navigationColor": "#0f172a",
+          "navigationColorDark": "#0f172a",
+          "navigationDividerColor": "#0f172a",
+          "navigationDividerColorDark": "#0f172a",
+          "backgroundColor": "#0f172a",
+          "enableNotifications": false,
+          "startUrl": "/trip-sheet-app/",
+          "iconUrl": "https://mwd1506dd-cpu.github.io/trip-sheet-app/icon-512.png",
+          "maskableIconUrl": "https://mwd1506dd-cpu.github.io/trip-sheet-app/icon-512.png",
+          "splashScreenFadeOutDuration": 300,
+          "signingKey": {
+            "path": "./android.keystore",
+            "alias": "android"
+          },
+          "appVersionName": "1.0.0",
+          "appVersionCode": 1,
+          "shortcuts": [],
+          "generatorApp": "bubblewrap-cli",
+          "webManifestUrl": "https://mwd1506dd-cpu.github.io/trip-sheet-app/manifest.json",
+          "fallbackType": "customtabs",
+          "features": {},
+          "alphaDependencies": {
+            "enabled": false
+          },
+          "enableSiteSettingsShortcut": true,
+          "isChromeOSOnly": false,
+          "isMetaQuest": false,
+          "fullScopeUrl": "https://mwd1506dd-cpu.github.io/trip-sheet-app/",
+          "minSdkVersion": 21,
+          "orientation": "portrait",
+          "fingerprints": [],
+          "additionalTrustedOrigins": [],
+          "retainedBundles": [],
+          "appVersion": "1.0.0"
+        }
+        EOF
+    
+    - name: Generate signing key
+      run: |
+        cd apk-build
+        keytool -genkeypair -v -keystore android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=TripSheet, OU=Dev, O=Personal, L=City, S=State, C=DZ"
+    
+    - name: Build APK
+      run: |
+        cd apk-build
+        bubblewrap build --skipPwaValidation
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: TripSheet-APK
+        path: apk-build/*.apk
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: github.ref == 'refs/heads/main'
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        name: TripSheet v1.0.${{ github.run_number }}
+        files: apk-build/*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
